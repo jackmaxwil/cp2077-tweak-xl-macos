@@ -16,7 +16,10 @@ struct std::hash<RED4ext::TweakDBID>
 {
     std::size_t operator()(RED4ext::TweakDBID aKey) const
     {
-        return aKey.value;
+        // Hash only what operator== compares (name hash and length), not the TweakDB value offset in the top 24
+        // bits: equal IDs must hash equally, or a flat stored with its old value offset is not found when it is
+        // overridden, and both copies end up in the batch.
+        return aKey.value & 0xFFFFFFFFFFull;
     }
 };
 
