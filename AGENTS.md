@@ -2,24 +2,24 @@
 
 ## Project Context
 
-TweakXL is a Cyberpunk 2077 mod that enables runtime modification of TweakDB values (game stats, items, vehicles). This port adapts the Windows plugin to macOS ARM64, using RED4ext for loading and Frida for hooking.
+TweakXL is a Cyberpunk 2077 mod that enables runtime modification of TweakDB values (game stats, items, vehicles). This port adapts the Windows plugin to macOS ARM64, using RED4ext for loading and RED4ext's native hook engine for hooking.
 
 ## Current Status (Canonical)
 
-See `docs/STATUS.md` for the up-to-date macOS port status and links to the address update workflow docs.
+See `docs/STATUS.md`. TweakXL is not loadable yet: RED4ext refuses it until every address hash it needs is verified. The authoritative progress table is §0 of `~/Development/cyberpunk/RESUME_PLAN.md`.
 
 ## Development Practices
 
 ### macOS Porting
 
-1. **Address resolver override.** Include `lib/Support/macOS/AddressResolverOverride.hpp` BEFORE any RED4ext SDK headers.
-2. **Custom address table.** TweakXL uses its own hash constants (different from SDK); maintain both in the override.
+1. **Address resolution.** `lib/Support/macOS/TweakXLAddressResolver.cpp` forwards every hash to the SDK resolver, which reads the canonical `cyberpunk2077_addresses.json` and resolves only entries marked verified.
+2. **Custom hashes.** TweakXL's hash constants live in `src/Red/Addresses/Library.hpp`; their offsets live in the SDK's canonical DB, not in this repo.
 3. **No Windows dependencies.** Remove or stub all `<windows.h>`, MinHook, and Win32 API usage.
 4. **dylib output.** Build target is `TweakXL.dylib`, not `.dll`.
 
 ### Hook Requirements
 
-TweakXL hooks these game functions (update `AddressResolverOverride.hpp` with correct offsets):
+TweakXL hooks these game functions (offsets live in the SDK's canonical DB):
 
 | Function | Hash | Purpose |
 |----------|------|---------|
@@ -56,12 +56,12 @@ lib/
 ├── Core/              # Base infrastructure (logging, hooking)
 └── Support/
     └── macOS/         # macOS-specific support
-        └── AddressResolverOverride.hpp  # CRITICAL: Address mappings
+        └── TweakXLAddressResolver.cpp  # Forwards to the SDK's verified-only resolver
 ```
 
 ### Key Files
 
-1. **`lib/Support/macOS/AddressResolverOverride.hpp`** - Maps TweakXL-specific hashes to macOS offsets. THIS IS THE MAIN FILE TO UPDATE FOR ADDRESS RESOLUTION.
+1. **`lib/Support/macOS/TweakXLAddressResolver.cpp`** - Forwards TweakXL hashes to the SDK resolver (canonical DB, verified entries only).
 2. **`src/Red/Addresses/Library.hpp`** - Defines TweakXL's custom address hash constants.
 3. **`src/Red/TweakDB/Raws.hpp`** - Raw function pointers using address resolution.
 4. **`src/App/Tweaks/TweakService.cpp`** - Main hook attachments (`HookAfter<Raw::TryLoadTweakDB>`).
@@ -95,7 +95,7 @@ HookAfter<Raw::TryLoadTweakDB>([&](bool& aSuccess) {
 
 1. **Check RED4ext log.** Look for "One of the required parameters for attaching hook is NULL".
 2. **Identify failing hash.** The log should indicate which address resolved to 0.
-3. **Update override file.** Add/fix the offset in `AddressResolverOverride.hpp`.
+3. **Fix the DB entry.** Correct the offset in `RED4ext.SDK/cyberpunk2077_addresses.json` and mark it verified only with evidence in `RED4ext.SDK/docs/ADDRESS_AUDIT.md`. `RED4ext.SDK/scripts/plugin_requirements.py TweakXL.dylib` lists every unverified hash.
 4. **Rebuild and reinstall.** `make && cp build/TweakXL.dylib <game>/red4ext/plugins/TweakXL/`.
 
 ### Finding New Addresses
@@ -150,7 +150,6 @@ red4ext/plugins/TweakXL/
 ### Dependencies
 
 - RED4ext.dylib must be installed and functional
-- FridaGadget.dylib for hook support
 - `cyberpunk2077_addresses.json` for SDK address resolution
 
 ## Common Pitfalls
@@ -158,4 +157,4 @@ red4ext/plugins/TweakXL/
 1. **Wrong hash values.** TweakXL uses different hashes than SDK for same functions—verify in `Library.hpp`.
 2. **Missing StatsDataSystem.** Stats hooks are optional but will warn; core functionality works without them.
 3. **Old addresses.** After game updates, all addresses may change—re-run analysis scripts.
-4. **Override not included.** If `AddressResolverOverride.hpp` isn't included first, SDK uses its own resolution.
+4. **Unverified addresses.** An unverified DB entry resolves to 0, and RED4ext refuses to load the plugin.

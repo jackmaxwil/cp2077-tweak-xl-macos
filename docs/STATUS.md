@@ -1,44 +1,22 @@
-# TweakXL macOS Port — Status
+# TweakXL macOS Port: Status
 
-> **Last updated:** 2026-02-21
-> **Target game build:** Cyberpunk 2077 macOS **v2.3.1**
-> **Target arch:** Apple Silicon (arm64)
-> **Status:** Complete and validated
+Target: Cyberpunk 2077 macOS 2.3.1 (arm64).
 
-## What works
+**Not loadable yet.** TweakXL builds, but some of the game addresses it needs are still unverified in the SDK's canonical address DB. RED4ext refuses to load a plugin unless every address hash compiled into it is verified, so TweakXL is not loaded in game.
 
-- **All 7 features bootstrapped** successfully at runtime
-- **3 StatService hooks** installed and active
-- **Custom stat types** enabled
-- **120+ seconds** stable runtime validated
-- **Tweak file loading** from `r6/tweaks/` directory
-- **Record creation** and **TweakDBID derivation** functional
+- Authoritative progress: §0 of `~/Development/cyberpunk/RESUME_PLAN.md` (a workspace file outside this repo).
+- Address evidence: `RED4ext.SDK/docs/ADDRESS_AUDIT.md`.
+- Remaining work: `python3 RED4ext.SDK/scripts/plugin_requirements.py TweakXL.dylib` lists every required hash and whether it is verified.
 
 ## Key files
 
-- **Address mappings (macOS)**: `lib/Support/macOS/AddressResolverOverride.hpp`
-- **Custom hash IDs**: `src/Red/Addresses/Library.hpp`
-- **Hook wiring**: `src/main.cpp` and services under `src/App/`
+- `lib/Support/macOS/TweakXLAddressResolver.cpp`: forwards every hash to the SDK resolver (canonical DB, verified entries only).
+- `src/Red/Addresses/Library.hpp`: TweakXL's hash constants.
+- `src/main.cpp` and the services under `src/App/`: hook wiring.
 
-## Quick build / install
+## Build
 
 ```bash
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j"$(sysctl -n hw.ncpu)"
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j "$(sysctl -n hw.ncpu)"
 ```
-
-Copy:
-- `TweakXL.dylib` -> `<game>/red4ext/plugins/TweakXL/`
-- Plugin `Data/` and `Scripts/` folders
-
-## Address update workflow
-
-Addresses are game-version specific. When the game updates:
-- See `docs/ADDRESS_UPDATE_GUIDE.md`
-- See `docs/MACOS_ADDRESS_DISCOVERY.md`
-
-## Related docs
-
-- `README_MACOS.md` (full macOS install + layout guide)
-- `MACOS_CHANGES.md` (port deltas vs Windows)

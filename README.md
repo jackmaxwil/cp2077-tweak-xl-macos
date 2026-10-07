@@ -2,11 +2,11 @@
 
 Runtime TweakDB modification for Cyberpunk 2077 on macOS ARM64.
 
-**Status:** Complete and validated — all 7 features bootstrapped, 3 StatService hooks, 120s+ stable.
+**Status:** Not loadable yet. Some of the game addresses TweakXL needs are still unverified, so RED4ext refuses to load it. See [docs/STATUS.md](docs/STATUS.md).
 
 ## What it does
 
-TweakXL enables runtime modification of TweakDB values (game stats, items, vehicles, economy). Loads `.yaml` and `.tweak` files from `r6/tweaks/` and applies them during game initialization. Built as a RED4ext `.dylib` plugin with Frida-based hooking.
+TweakXL enables runtime modification of TweakDB values (game stats, items, vehicles, economy). Loads `.yaml` and `.tweak` files from `r6/tweaks/` and applies them during game initialization. Built as a RED4ext `.dylib` plugin; hooks go through RED4ext's native hook engine.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ cp -r bundle/Scripts/ "<game>/red4ext/plugins/TweakXL/Scripts/"
 
 | File | Purpose |
 |------|---------|
-| `lib/Support/macOS/AddressResolverOverride.hpp` | macOS address mappings (include first) |
+| `lib/Support/macOS/TweakXLAddressResolver.cpp` | Resolves addresses through the SDK's verified-only DB |
 | `src/Red/Addresses/Library.hpp` | TweakXL-specific hash constants |
 | `src/App/Tweaks/TweakService.cpp` | Main hook attachments |
 | `docs/STATUS.md` | Port status |

@@ -1,7 +1,0 @@
-/Users/jackmazac/Development/cp2077-tweak-xl/build-macos-modmenu-fix/CMakeFiles/TweakXL.dir
-/Users/jackmazac/Development/cp2077-tweak-xl/build-macos-modmenu-fix/CMakeFiles/edit_cache.dir
-/Users/jackmazac/Development/cp2077-tweak-xl/build-macos-modmenu-fix/CMakeFiles/rebuild_cache.dir
-/Users/jackmazac/Development/cp2077-tweak-xl/build-macos-modmenu-fix/CMakeFiles/list_install_components.dir
-/Users/jackmazac/Development/cp2077-tweak-xl/build-macos-modmenu-fix/CMakeFiles/install.dir
-/Users/jackmazac/Development/cp2077-tweak-xl/build-macos-modmenu-fix/CMakeFiles/install/local.dir
-/Users/jackmazac/Development/cp2077-tweak-xl/build-macos-modmenu-fix/CMakeFiles/install/strip.dir

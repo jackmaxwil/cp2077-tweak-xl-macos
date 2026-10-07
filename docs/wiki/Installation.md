@@ -67,7 +67,6 @@ After installation, your directory structure should look like:
 Cyberpunk 2077/
 ├── red4ext/
 │   ├── RED4ext.dylib
-│   ├── frida-gadget.config
 │   └── plugins/
 │       └── TweakXL/
 │           ├── TweakXL.dylib

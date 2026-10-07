@@ -25,7 +25,7 @@ TweakXL is a modding tool that allows you to modify TweakDB - Cyberpunk 2077's d
 ## macOS-Specific Information
 
 The macOS port uses:
-- **Frida Gadget** for function hooking (instead of Windows Detours)
+- RED4ext's native arm64 hook engine (instead of Windows Detours/MinHook)
 - **CMake** build system (instead of xmake)
 - ARM64 native binaries for Apple Silicon
 

@@ -18,7 +18,7 @@ This document summarizes all changes made to port TweakXL to macOS Apple Silicon
 | Dependency | Windows | macOS |
 |------------|---------|-------|
 | RED4ext.SDK | WopsS/RED4ext.SDK | memaxo/RED4ext.SDK-macos |
-| Hooking | MinHook | Frida (via RED4ext) |
+| Hooking | MinHook | RED4ext native hook engine |
 | WIL | vendor/wil | Removed |
 | TiltedCore | Package | Replaced with std |
 | hopscotch | Package | std::unordered_* |
@@ -61,7 +61,7 @@ This document summarizes all changes made to port TweakXL to macOS Apple Silicon
 
 #### RED4extProvider (Unchanged)
 - Uses RED4ext SDK hooking API
-- Automatically uses Frida on macOS
+- Uses RED4ext's native hook engine on macOS
 
 ### Application
 
@@ -92,7 +92,7 @@ This document summarizes all changes made to port TweakXL to macOS Apple Silicon
 
 ## Removed Dependencies
 
-- **MinHook** - Windows-only, replaced by Frida via RED4ext
+- **MinHook** - Windows-only, replaced by RED4ext's hooking API
 - **WIL** - Windows Implementation Library, not needed
 - **TiltedCore** - Windows allocator, replaced with std::allocator
 - **hopscotch-map** - Replaced with std::unordered_map on macOS

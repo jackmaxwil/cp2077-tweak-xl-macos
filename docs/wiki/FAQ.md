@@ -24,11 +24,11 @@ Mod managers are Windows-only. On macOS, install mods manually by copying files.
 
 ## Technical
 
-### Why Frida instead of Detours?
-macOS on Apple Silicon has strict memory protection (W^X). Frida Gadget provides a compatible hooking mechanism.
+### Why not Detours?
+Detours is Windows-only. On macOS, RED4ext patches game code with its own arm64 hook engine, which needs the game re-signed with `allow-unsigned-executable-memory`.
 
 ### Is there a performance impact?
-Minimal. TweakDB modifications happen at load time. Frida hooking adds negligible overhead.
+Minimal. TweakDB modifications happen at load time.
 
 ### Can I help reverse engineer addresses?
 Yes! See the [contributing guide](https://github.com/memaxo/cp2077-tweak-xl-macos/blob/macos-port/CONTRIBUTING.md) for how to help identify game function addresses.
