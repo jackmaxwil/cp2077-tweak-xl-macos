@@ -630,8 +630,11 @@ void Red::TweakDBManager::InheritFlats(const Red::TweakDBManager::BatchPtr& aBat
 
 void Red::TweakDBManager::CreateBaseName(Red::TweakDBID aId, const std::string& aName)
 {
+#ifndef __APPLE__
+    // Only registers the name with CET, which does not exist on macOS (where Derive also has another signature).
     Red::TweakDBID empty;
     Raw::CreateTweakDBID(&empty, &aId, aName.c_str());
+#endif
 
     {
         std::unique_lock _(m_mutex);
@@ -653,6 +656,7 @@ void Red::TweakDBManager::CreateExtraNames(Red::TweakDBID aId, const std::string
         const auto propId = aId + propInfo->appendix;
         const auto propName = aName + propInfo->appendix;
 
+#ifndef __APPLE__
         if (propInfo->dataOffset)
         {
             Raw::CreateTweakDBID(&aId, &propId, propInfo->appendix.c_str());
@@ -662,6 +666,7 @@ void Red::TweakDBManager::CreateExtraNames(Red::TweakDBID aId, const std::string
             Red::TweakDBID empty;
             Raw::CreateTweakDBID(&empty, &propId, propName.c_str());
         }
+#endif
 
         m_knownNames[propId] = propName;
     }

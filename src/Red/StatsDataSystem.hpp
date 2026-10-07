@@ -33,9 +33,22 @@ constexpr auto InitializeParams = Core::RawFunc<
     /* addr = */ Red::AddressLib::StatsDataSystem_InitializeParams,
     /* type = */ void (*)(void* aSystem)>();
 
+#ifdef __APPLE__
+// arm64: the two floats come back in s0/s1, there is no hidden return pointer.
+struct StatRange
+{
+    float min;
+    float max;
+};
+
+constexpr auto GetStatRange = Core::RawFunc<
+    /* addr = */ Red::AddressLib::StatsDataSystem_GetStatRange,
+    /* type = */ StatRange (*)(void* aSystem, uint32_t aStat)>();
+#else
 constexpr auto GetStatRange = Core::RawFunc<
     /* addr = */ Red::AddressLib::StatsDataSystem_GetStatRange,
     /* type = */ uint64_t* (*)(void* aSystem, uint64_t*, uint32_t aStat)>();
+#endif
 
 constexpr auto GetStatFlags = Core::RawFunc<
     /* addr = */ Red::AddressLib::StatsDataSystem_GetStatFlags,

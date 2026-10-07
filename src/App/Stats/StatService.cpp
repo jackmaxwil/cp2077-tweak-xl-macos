@@ -115,6 +115,24 @@ void App::StatService::RegisterStats(void* aStatSystem, const Core::Set<Red::Twe
     }
 }
 
+#ifdef __APPLE__
+Raw::StatsDataSystem::StatRange App::StatService::OnGetStatRange(void* aSystem, uint32_t aStat)
+{
+    if (aStat != InvalidStat)
+    {
+        auto& statParams = Raw::StatsDataSystem::StatParams::Ref(aSystem);
+        auto& statLock = Raw::StatsDataSystem::StatLock::Ref(aSystem);
+
+        std::shared_lock _(statLock);
+        if (aStat < statParams.size)
+        {
+            return {statParams[aStat].min, statParams[aStat].max};
+        }
+    }
+
+    return {};
+}
+#else
 uint64_t* App::StatService::OnGetStatRange(void* aSystem, uint64_t* aRange, uint32_t aStat)
 {
     if (aStat != InvalidStat)
@@ -133,6 +151,7 @@ uint64_t* App::StatService::OnGetStatRange(void* aSystem, uint64_t* aRange, uint
     *aRange = 0;
     return aRange;
 }
+#endif
 
 uint32_t App::StatService::OnGetStatFlags(void* aSystem, uint32_t aStat)
 {
