@@ -14,7 +14,7 @@ constexpr bool IsFakeStatic(CName aTypeName)
 
 using CallFunction_t = bool (*)(IFunction*, IScriptable* aContext, CStackFrame* aFrame, void* aRet, void* aRetType);
 
-#ifdef RED4EXT_SDK_0_5_0
+#if defined(RED4EXT_V1_SDK_VERSION_CURRENT) || defined(RED4EXT_SDK_0_5_0)
 inline UniversalRelocFunc<CallFunction_t> CallFunctionWithFrame(RED4ext::Detail::AddressHashes::CBaseFunction_InternalExecute);
 #else
 inline RelocFunc<CallFunction_t> CallFunctionWithFrame(RED4ext::Addresses::CBaseFunction_InternalExecute);
@@ -125,7 +125,7 @@ inline bool CallFunctionWithArgs(Red::CStackFrame* aFrame, CBaseFunction* aFunc,
                 return false;
             }
 
-            if (aFunc->params.size)
+            if (aFunc->params.size != 0)
             {
                 stack.args = args.data() + 1;
             }
@@ -135,7 +135,7 @@ inline bool CallFunctionWithArgs(Red::CStackFrame* aFrame, CBaseFunction* aFunc,
             stack.args = args.data();
         }
 
-        if (aFunc->params.size)
+        if (aFunc->params.size != 0)
         {
             stack.argsCount = aFunc->params.size;
 

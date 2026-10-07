@@ -21,11 +21,11 @@ void App::ScriptManager::SetFlat(Red::IScriptable*, Red::CStackFrame* aFrame, bo
 
     ConvertScriptValueForFlatValue(variant, s_reflection);
 
-    auto success = s_manager->SetFlat(flatID, variant.GetType(), variant.GetDataPtr());
+    const auto result = s_manager->SetFlat(flatID, variant.GetType(), variant.GetDataPtr());
 
     if (aRet)
     {
-        *aRet = success;
+        *aRet = (result == Red::TweakDBManager::Result::OK);
     }
 }
 

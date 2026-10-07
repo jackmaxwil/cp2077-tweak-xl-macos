@@ -108,6 +108,11 @@ void App::TweakChangelog::ForgetResourcePaths()
 
 void App::TweakChangelog::CheckForIssues(const Core::SharedPtr<Red::TweakDBManager>& aManager)
 {
+    for (const auto& conflict : aManager->GetConflicts() | std::views::values)
+    {
+        LogWarning("{} has hash collision with {}.", conflict.first, conflict.second);
+    }
+
     {
         Core::Map<Red::TweakDBID, Core::Set<Red::TweakDBID>> brokenRefs;
 
@@ -230,9 +235,9 @@ void App::TweakChangelog::RevertChanges(const Core::SharedPtr<Red::TweakDBManage
             elementType->Assign(arrayType->GetElement(restoredArray.get(), deletionIndex), deletionValue.get());
         }
 
-        const auto success = aManager->SetFlat(flatId, arrayType, restoredArray.get());
+        const auto result = aManager->SetFlat(flatId, arrayType, restoredArray.get());
 
-        if (!success)
+        if (result != Red::TweakDBManager::Result::OK)
         {
             LogError("Cannot restore {}, failed to assign the value.", aManager->GetName(flatId));
             continue;
@@ -255,9 +260,9 @@ void App::TweakChangelog::RevertChanges(const Core::SharedPtr<Red::TweakDBManage
             continue;
         }
 
-        const auto success = aManager->SetFlat(flatId, flatData.type, assignment.previous);
+        const auto result = aManager->SetFlat(flatId, flatData.type, assignment.previous);
 
-        if (!success)
+        if (result != Red::TweakDBManager::Result::OK)
         {
             LogError("Cannot restore {}, failed to assign the value.", aManager->GetName(flatId));
             continue;

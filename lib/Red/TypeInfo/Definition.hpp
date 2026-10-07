@@ -679,8 +679,8 @@ class ClassDescriptorDefaultImpl : public ClassDescriptor<TClass>
         }
         else
         {
-            using func_t = bool (*)(CClass*, const ScriptInstance, const ScriptInstance, uint32_t);
-#ifdef RED4EXT_SDK_0_5_0
+            using func_t = bool (*)(CClass*, const void*, const void*, uint32_t);
+#if defined(RED4EXT_V1_SDK_VERSION_CURRENT) || defined(RED4EXT_SDK_0_5_0)
             static UniversalRelocFunc<func_t> func(RED4ext::Detail::AddressHashes::TTypedClass_IsEqual);
 #else
             static RelocFunc<func_t> func(RED4ext::Addresses::TTypedClass_IsEqual);
@@ -698,9 +698,14 @@ class ClassDescriptorDefaultImpl : public ClassDescriptor<TClass>
                 CClass::parent->Assign(aLhs, aRhs);
             }
         }
+        else if constexpr (std::is_copy_assignable_v<TClass>)
+        {
+            *static_cast<TClass*>(aLhs) = *static_cast<const TClass*>(aRhs);
+        }
         else if constexpr (std::is_copy_constructible_v<TClass>)
         {
-            new (aLhs) TClass(*static_cast<TClass*>(aRhs));
+            static_cast<TClass*>(aLhs)->~TClass();
+            new (aLhs) TClass(*static_cast<const TClass*>(aRhs));
         }
     }
 
@@ -780,7 +785,7 @@ public:
     {
         for (uint32_t i = 0; i != valueList.size; ++i)
         {
-            if (aValue == valueList.entries[i])
+            if (aValue == valueList[i])
                 return true;
         }
 
@@ -791,7 +796,7 @@ public:
     {
         for (uint32_t i = 0; i != valueList.size; ++i)
         {
-            if (aName == hashList.entries[i])
+            if (aName == hashList[i])
                 return true;
         }
 
@@ -813,7 +818,7 @@ public:
 
         for (uint32_t i = 0; i != valueList.size; ++i)
         {
-            if (aValue == valueList.entries[i])
+            if (aValue == valueList[i])
                 return;
         }
 
@@ -1022,7 +1027,9 @@ struct ClassDefinition
     {
         constexpr auto name = GetTypeNameStr<TClass>();
 
-        auto* type = new Descriptor();
+        auto* type = Red::Memory::RTTIAllocator::Get()->Alloc<Descriptor>();
+        new (type) Descriptor();
+
         type->name = CNamePool::Add(name.data());
 
         if constexpr (Detail::HasRegisterHandler<Specialization, Descriptor>)

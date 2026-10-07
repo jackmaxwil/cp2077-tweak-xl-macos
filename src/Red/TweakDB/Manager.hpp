@@ -9,6 +9,15 @@ namespace Red
 class TweakDBManager
 {
 public:
+    enum class Result
+    {
+        OK,
+        InvalidID,
+        InvalidType,
+        InvalidValue,
+        Unallocated,
+    };
+
     class Batch
     {
         Core::Set<Red::TweakDBID> flats;
@@ -33,8 +42,8 @@ public:
     const Red::CClass* GetRecordType(Red::TweakDBID aRecordId);
     bool IsFlatExists(Red::TweakDBID aFlatId);
     bool IsRecordExists(Red::TweakDBID aRecordId);
-    bool SetFlat(Red::TweakDBID aFlatId, const Red::CBaseRTTIType* aType, Red::Instance aInstance);
-    bool SetFlat(Red::TweakDBID aFlatId, const Red::Value<>& aData);
+    Result SetFlat(Red::TweakDBID aFlatId, const Red::CBaseRTTIType* aType, Red::Instance aInstance);
+    Result SetFlat(Red::TweakDBID aFlatId, const Red::Value<>& aData);
     bool CreateRecord(Red::TweakDBID aRecordId, const Red::CClass* aType);
     bool CloneRecord(Red::TweakDBID aRecordId, Red::TweakDBID aSourceId);
     bool InheritProps(Red::TweakDBID aRecordId, Red::TweakDBID aSourceId);
@@ -42,8 +51,6 @@ public:
     void RegisterEnum(Red::TweakDBID aRecordId);
     void RegisterName(const std::string& aName, const Red::CClass* aType = nullptr);
     void RegisterName(Red::TweakDBID aId, const std::string& aName, const Red::CClass* aType = nullptr);
-    const Core::Set<Red::TweakDBID>& GetEnums();
-    std::string_view GetName(Red::TweakDBID aId);
 
     BatchPtr StartBatch();
     const Core::Set<Red::TweakDBID>& GetFlats(const BatchPtr& aBatch);
@@ -51,8 +58,9 @@ public:
     const Red::CClass* GetRecordType(const BatchPtr& aBatch, Red::TweakDBID aRecordId);
     bool IsFlatExists(const BatchPtr& aBatch, Red::TweakDBID aFlatId);
     bool IsRecordExists(const BatchPtr& aBatch, Red::TweakDBID aRecordId);
-    bool SetFlat(const BatchPtr& aBatch, Red::TweakDBID aFlatId, const Red::CBaseRTTIType* aType, Red::Instance aValue);
-    bool SetFlat(const BatchPtr& aBatch, Red::TweakDBID aFlatId, const Red::Value<>& aData);
+    Result SetFlat(const BatchPtr& aBatch, Red::TweakDBID aFlatId, const Red::CBaseRTTIType* aType,
+                   Red::Instance aValue);
+    Result SetFlat(const BatchPtr& aBatch, Red::TweakDBID aFlatId, const Red::Value<>& aData);
     bool CreateRecord(const BatchPtr& aBatch, Red::TweakDBID aRecordId, const Red::CClass* aType);
     bool CloneRecord(const BatchPtr& aBatch, Red::TweakDBID aRecordId, Red::TweakDBID aSourceId);
     bool InheritProps(const BatchPtr& aBatch, Red::TweakDBID aRecordId, Red::TweakDBID aSourceId);
@@ -61,23 +69,25 @@ public:
     void RegisterName(const BatchPtr& aBatch, Red::TweakDBID aId, const std::string& aName);
     void CommitBatch(const BatchPtr& aBatch);
 
-    void Invalidate();
+    const Core::Set<Red::TweakDBID>& GetEnums();
+    const Core::Map<Red::TweakDBID, std::pair<std::string, std::string>>& GetConflicts();
+    std::string_view GetName(Red::TweakDBID aId);
 
     Red::TweakDB* GetTweakDB();
-    Core::SharedPtr<Red::TweakDBReflection>& GetReflection();
+    const Core::SharedPtr<Red::TweakDBBuffer>& GetBuffer() const;
+    const Core::SharedPtr<Red::TweakDBReflection>& GetReflection() const;
 
 private:
     template<class SharedLockable>
-    inline bool AssignFlat(Red::SortedUniqueArray<Red::TweakDBID>& aFlats, Red::TweakDBID aFlatId,
-                           const Red::CBaseRTTIType* aType, Red::Instance aInstance,
-                           SharedLockable& aMutex);
+    inline Result AssignFlat(Red::SortedUniqueArray<Red::TweakDBID>& aFlats, Red::TweakDBID aFlatId,
+                             const Red::CBaseRTTIType* aType, Red::Instance aInstance, SharedLockable& aMutex);
     inline void InheritFlats(Red::SortedUniqueArray<Red::TweakDBID>& aFlats, Red::TweakDBID aRecordId,
                              const Red::TweakDBRecordInfo* aRecordInfo);
     inline void InheritFlats(Red::SortedUniqueArray<Red::TweakDBID>& aFlats, Red::TweakDBID aRecordId,
                              const Red::TweakDBRecordInfo* aRecordInfo, Red::TweakDBID aSourceId);
 
-    inline bool AssignFlat(const Red::TweakDBManager::BatchPtr& aBatch, Red::TweakDBID aFlatId,
-                           const Red::Value<>& aValue);
+    inline Result AssignFlat(const Red::TweakDBManager::BatchPtr& aBatch, Red::TweakDBID aFlatId,
+                             const Red::Value<>& aValue);
     inline void InheritFlats(const Red::TweakDBManager::BatchPtr& aBatch, Red::TweakDBID aRecordId,
                              const Red::TweakDBRecordInfo* aRecordInfo);
     inline void InheritFlats(const Red::TweakDBManager::BatchPtr& aBatch, Red::TweakDBID aRecordId,
@@ -90,6 +100,7 @@ private:
     Core::SharedPtr<Red::TweakDBBuffer> m_buffer;
     Core::SharedPtr<Red::TweakDBReflection> m_reflection;
     Core::Map<Red::TweakDBID, std::string> m_knownNames;
+    Core::Map<Red::TweakDBID, std::pair<std::string, std::string>> m_conflictNames;
     Core::Set<Red::TweakDBID> m_knownEnums;
     std::shared_mutex m_mutex;
 };

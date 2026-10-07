@@ -112,3 +112,10 @@ inline std::wstring NarrowToWide(const std::string& aNarrow)
 
 // NOTE: Windows type aliases (HMODULE, DWORD, etc.) and compatibility functions
 // (GetModuleHandleW, etc.) are already provided by RED4ext.SDK's WinCompat.hpp
+
+// Win32 ExitProcess: terminate immediately (no atexit handlers), used when TweakDB data cannot be allocated.
+#include <cstdlib>
+inline void ExitProcess(unsigned int aExitCode)
+{
+    std::_Exit(static_cast<int>(aExitCode));
+}

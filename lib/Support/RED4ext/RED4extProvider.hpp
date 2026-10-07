@@ -46,7 +46,7 @@ public:
         return Defer(this);
     }
 
-    auto RegisterScripts(const std::filesystem::path& aPath)
+    auto RegisterScripts(const std::filesystem::path& aPath) noexcept
     {
 #if defined(_WIN32) || defined(_WIN64)
         m_sdk->scripts->Add(m_plugin, aPath.c_str());

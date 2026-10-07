@@ -75,7 +75,7 @@ void App::ScriptInterface::GetRecords(Red::IScriptable*, Red::CStackFrame* aFram
 
     auto records = FetchRecords(s_reflection->GetRecordFullName(recordTypeName));
 
-    if (!records || records->size <= 0)
+    if (!records || records->size == 0)
         return;
 
     *aRet = *records;
@@ -113,7 +113,7 @@ void App::ScriptInterface::GetRecordByIndex(Red::IScriptable*, Red::CStackFrame*
 
     auto records = FetchRecords(recordTypeName);
 
-    if (!records || records->size <= 0 || recordIndex >= records->size)
+    if (!records || records->size == 0 || recordIndex >= records->size)
         return;
 
     *aRet = records->entries[recordIndex];
@@ -133,6 +133,6 @@ App::ScriptInterface::RecordArray* App::ScriptInterface::FetchRecords(Red::CName
     if (!tdb)
         return nullptr;
 
-    std::shared_lock<Red::SharedMutex> _(tdb->mutex01);
+    std::shared_lock<Red::SharedSpinLock> _(tdb->mutex01);
     return reinterpret_cast<RecordArray*>(tdb->recordsByType.Get(recordType));
 }

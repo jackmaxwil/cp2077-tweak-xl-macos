@@ -32,11 +32,14 @@ void App::TweakService::OnBootstrap()
             m_executor = Core::MakeShared<App::TweakExecutor>(m_manager);
             m_changelog = Core::MakeShared<App::TweakChangelog>();
 
+            ReportUsage();
+
             if (ImportMetadata())
             {
                 EnsureRuntimeAccess();
                 ApplyPatches();
-                LoadTweaks(false);
+                LoadTweaks();
+                ReportUsage();
             }
         }
     });
@@ -65,17 +68,12 @@ void App::TweakService::OnShutdown()
     m_reflection.reset();
 }
 
-void App::TweakService::LoadTweaks(bool aCheckForIssues)
+void App::TweakService::LoadTweaks()
 {
     if (m_manager)
     {
         m_importer->ImportTweaks(m_importPaths, m_changelog);
         m_executor->ExecuteTweaks();
-
-        if (aCheckForIssues)
-        {
-            m_changelog->CheckForIssues(m_manager);
-        }
     }
 }
 
@@ -125,6 +123,21 @@ void App::TweakService::CheckForIssues()
     if (m_manager && m_changelog)
     {
         m_changelog->CheckForIssues(m_manager);
+    }
+}
+
+void App::TweakService::ReportUsage()
+{
+    if (m_manager)
+    {
+        auto stats = m_manager->GetBuffer()->GetStats();
+
+        LogDebug("TweakDB contains {} records and {} flats.", stats.recordEntries, stats.flatEntries);
+        LogDebug("TweakDB buffer is used at {:.3f} MiB / {:.0f} MiB ({:.1f}%) with {} pooled values.",
+                 static_cast<float>(stats.bufferSize) / (1024 * 1024),
+                 static_cast<float>(stats.bufferMaxSize) / (1024 * 1024),
+                 static_cast<float>(stats.bufferSize) / static_cast<float>(stats.bufferMaxSize) * 100.0f,
+                 stats.poolValues);
     }
 }
 
