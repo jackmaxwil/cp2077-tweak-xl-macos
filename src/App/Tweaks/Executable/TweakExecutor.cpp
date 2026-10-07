@@ -27,8 +27,16 @@ void App::TweakExecutor::ExecuteTweaks()
 {
     try
     {
+        // GetClasses with a null base returns every class; without a registered ScriptableTweak there is nothing to run.
+        Red::CClass* tweakBase = s_scriptableTweakType;
+        if (!tweakBase)
+        {
+            LogError("ScriptableTweak is not registered, scriptable tweaks are disabled.");
+            return;
+        }
+
         Red::DynArray<Red::CClass*> tweakClasses;
-        m_rtti->GetClasses(s_scriptableTweakType, tweakClasses);
+        m_rtti->GetClasses(tweakBase, tweakClasses);
 
         if (tweakClasses.size == 0)
             return;
