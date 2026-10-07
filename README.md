@@ -4,7 +4,7 @@ TweakXL lets mods change Cyberpunk 2077's TweakDB, the game database of items, s
 
 ## Install
 
-TweakXL is part of the RED4ext macOS release. Follow [RED4ext's install guide](https://github.com/jackmaxwil/RED4ext-macos/blob/macos-port/docs/INSTALL_MACOS.md):
+TweakXL is part of the RED4ext macOS release. Follow [RED4ext's install guide](https://github.com/jackmaxwil/RED4ext-macos/blob/main/docs/INSTALL_MACOS.md):
 
 1. Unzip the release over the game folder (`~/Library/Application Support/Steam/steamapps/common/Cyberpunk 2077`).
 2. Run the one-time setup, `red4ext/macos/scripts/install_macos.sh`, from the game folder.
@@ -43,7 +43,7 @@ Requires Xcode command line tools and Homebrew.
 
 ```bash
 brew install cmake spdlog yaml-cpp
-git clone --recursive -b macos-port https://github.com/jackmaxwil/cp2077-tweak-xl-macos.git
+git clone --recursive https://github.com/jackmaxwil/cp2077-tweak-xl-macos.git
 cd cp2077-tweak-xl-macos
 cmake -S . -B build-dev -DCMAKE_BUILD_TYPE=Release
 cmake --build build-dev -j8

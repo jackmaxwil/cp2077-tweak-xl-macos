@@ -1,12 +1,12 @@
 # TweakXL macOS port: agent notes
 
-Fork of [psiberx/cp2077-tweak-xl](https://github.com/psiberx/cp2077-tweak-xl) (MIT), branch `macos-port`, remote `jackmaxwil/cp2077-tweak-xl-macos`. It works in game on Cyberpunk 2077 2.3.1 (Steam, Apple silicon) as a RED4ext plugin. User docs: `README.md`.
+Fork of [psiberx/cp2077-tweak-xl](https://github.com/psiberx/cp2077-tweak-xl) (MIT), branch `main`, remote `jackmaxwil/cp2077-tweak-xl-macos`. It works in game on Cyberpunk 2077 2.3.1 (Steam, Apple silicon) as a RED4ext plugin. User docs: `README.md`.
 
 ## Rules
 
 - **macOS first, upstream rebaseable.** Keep the diff against upstream small. Guard platform code with `#if defined(_WIN32) || defined(_WIN64)` / `#else` instead of rewriting shared code. Do not delete upstream files macOS does not use (`xmake.lua`, `support/`, `config/`, `tools/dist/`, `vendor/wil`).
 - **Verified addresses only.** Every game address comes from the RED4ext.SDK canonical DB (`../RED4ext.SDK/cyberpunk2077_addresses.json`) through `RED4ext::UniversalRelocBase::Resolve` (see `lib/Support/macOS/TweakXLAddressResolver.cpp`). Unverified entries resolve to 0, and RED4ext refuses a plugin that needs any unverified hash. Never hard-code offsets here. Mark an entry verified only with evidence in `../RED4ext.SDK/docs/ADDRESS_AUDIT.md`. `python3 ../RED4ext.SDK/scripts/plugin_requirements.py build-dev/TweakXL.dylib` lists the hashes TweakXL needs and their state.
-- **No Frida.** Hooks go through RED4ext's native hook engine (`lib/Support/macOS/MacOSHookingProvider.hpp`).
+- **Native hooks only.** Hooks go through RED4ext's native hook engine (`lib/Support/macOS/MacOSHookingProvider.hpp`).
 - **Never launch the game or Steam from tooling.** In-game testing is done by the user, or by RED4ext's `tools/cp-run` when asked.
 
 ## Layout
