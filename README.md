@@ -48,7 +48,7 @@ How to write tweaks: see the [upstream wiki](https://github.com/psiberx/cp2077-t
 Requires Xcode command line tools and Homebrew.
 
 ```bash
-brew install cmake spdlog yaml-cpp
+brew install cmake
 git clone --recursive https://github.com/jackmaxwil/cp2077-tweak-xl-macos.git
 cd cp2077-tweak-xl-macos
 cmake -S . -B build-dev -DCMAKE_BUILD_TYPE=Release
@@ -59,7 +59,7 @@ The result is `build-dev/TweakXL.dylib`. If a checkout of [RED4ext.SDK-macos](ht
 
 ## macOS changes
 
-- CMake build (`CMakeLists.txt`) producing `TweakXL.dylib`, using spdlog and yaml-cpp from Homebrew. `xmake.lua` is kept for Windows.
+- CMake build (`CMakeLists.txt`) producing `TweakXL.dylib`, with spdlog and yaml-cpp built in from pinned sources. `xmake.lua` is kept for Windows.
 - Hooks go through RED4ext's native arm64 hook engine (`lib/Support/macOS/MacOSHookingProvider.hpp`) instead of MinHook.
 - Game addresses come from the RED4ext.SDK address database (`lib/Support/macOS/TweakXLAddressResolver.cpp`). Only entries marked verified resolve; all 54 that TweakXL uses are verified for 2.3.1.
 - Standard containers and allocators replace TiltedCore and hopscotch-map; Win32 calls have POSIX equivalents (`lib/Core/macOS.hpp`, `lib/Core/Runtime/`).

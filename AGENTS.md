@@ -26,7 +26,7 @@ cmake -S . -B build-dev -DCMAKE_BUILD_TYPE=Release
 cmake --build build-dev -j8
 ```
 
-Needs `brew install cmake spdlog yaml-cpp` and the submodules. CMake prefers `../RED4ext.SDK/include` and falls back to `vendor/RED4ext.SDK`.
+Needs `brew install cmake` and the submodules. CMake prefers `../RED4ext.SDK/include` and falls back to `vendor/RED4ext.SDK`.
 
 ## Debugging
 
