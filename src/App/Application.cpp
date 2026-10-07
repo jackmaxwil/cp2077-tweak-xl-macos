@@ -5,12 +5,12 @@
 #include "App/Stats/StatService.hpp"
 #include "App/Tweaks/TweakService.hpp"
 #include "Core/Foundation/RuntimeProvider.hpp"
+#include "Support/RedLib/RedLibProvider.hpp"
 #include "Support/RED4ext/RED4extProvider.hpp"
 #include "Support/Spdlog/SpdlogProvider.hpp"
 
 #if defined(_WIN32) || defined(_WIN64)
 #include "Support/MinHook/MinHookProvider.hpp"
-#include "Support/RedLib/RedLibProvider.hpp"
 #else
 // macOS: Use custom address resolver and hooking provider
 #include "Support/macOS/TweakXLAddressResolver.hpp"
@@ -78,9 +78,9 @@ App::Application::Application(void* aHandle, const RED4ext::Sdk* aSdk)
         ->RegisterScripts(Env::PluginScriptsDir());
 #endif
 
-#if defined(_WIN32) || defined(_WIN64)
+    // Registers TweakXL's native script classes (TweakDBManager, TweakDBBatch, ...). Without them the game's script
+    // loader cannot bind the declarations in TweakXL's scripts and stops with "Failed to initialize scripts data!".
     Register<Support::RedLibProvider>();
-#endif
 
     BootTrace("Step 5: TweakService...");
     Register<App::TweakService>(Env::GameVer(), Env::GameDir(), Env::TweaksDir(),
