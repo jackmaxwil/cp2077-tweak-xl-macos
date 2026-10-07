@@ -168,7 +168,7 @@ target_link_libraries(TweakXL PRIVATE
     semver
     pegtl
     spdlog::spdlog
-    yaml-cpp
+    yaml-cpp::yaml-cpp
 )
 
 if(NOT APPLE)
