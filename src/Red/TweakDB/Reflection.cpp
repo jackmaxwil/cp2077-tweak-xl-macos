@@ -91,6 +91,25 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
 
     const auto baseOffset = aType->parent->size;
 
+    // Flat offsets follow the order of the record's script functions, and each property's helper functions are
+    // skipped by position. Check that the skipped functions belong to the property, so a different registration
+    // order (another platform or patch) fails closed instead of assigning flats to the wrong offsets.
+    const auto relatedFuncsMatch = [aType](uint32_t aGetterIndex, uint32_t aCount) {
+        if (aGetterIndex + aCount >= aType->funcs.size)
+            return false;
+        auto lower = [](std::string aStr) {
+            std::transform(aStr.begin(), aStr.end(), aStr.begin(), [](unsigned char c) { return std::tolower(c); });
+            return aStr;
+        };
+        const auto getter = lower(aType->funcs[aGetterIndex]->shortName.ToString());
+        for (uint32_t i = 1; i <= aCount; ++i)
+        {
+            if (lower(aType->funcs[aGetterIndex + i]->shortName.ToString()).find(getter) == std::string::npos)
+                return false;
+        }
+        return true;
+    };
+
     for (uint32_t funcIndex = 0u; funcIndex < aType->funcs.size; ++funcIndex)
     {
         const auto func = aType->funcs[funcIndex];
@@ -119,6 +138,11 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
             // func Get[Prop]Item()
             // func Get[Prop]ItemHandle()
             // func [Prop]Contains()
+            if (!relatedFuncsMatch(funcIndex, 4))
+            {
+                LogError("{}: unexpected function order at {}, record layout unknown", aType->name.ToString(), funcIndex);
+                return nullptr;
+            }
             funcIndex += 4;
         }
         else
@@ -139,6 +163,11 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
 
                 // Skip related function:
                 // func Get[Prop]Handle()
+                if (!relatedFuncsMatch(funcIndex, 1))
+                {
+                    LogError("{}: unexpected function order at {}, record layout unknown", aType->name.ToString(), funcIndex);
+                    return nullptr;
+                }
                 funcIndex += 1;
                 break;
             }
@@ -153,6 +182,11 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
                     // Skip related functions:
                     // func Get[Prop]Count()
                     // func Get[Prop]Item()
+                    if (!relatedFuncsMatch(funcIndex, 2))
+                    {
+                        LogError("{}: unexpected function order at {}, record layout unknown", aType->name.ToString(), funcIndex);
+                        return nullptr;
+                    }
                     funcIndex += 2;
                 }
                 else
@@ -168,6 +202,11 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
                     // func Get[Prop]Count()
                     // func Get[Prop]Item()
                     // func [Prop]Contains()
+                    if (!relatedFuncsMatch(funcIndex, 3))
+                    {
+                        LogError("{}: unexpected function order at {}, record layout unknown", aType->name.ToString(), funcIndex);
+                        return nullptr;
+                    }
                     funcIndex += 3;
                 }
                 break;
@@ -192,6 +231,8 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
                     {
                         auto propId = sampleId + PropSeparator + propName;
                         auto flat = m_tweakDb->GetFlatValue(propId);
+                        if (!flat)
+                            return nullptr;
                         returnType = flat->GetValue().type;
                     }
 

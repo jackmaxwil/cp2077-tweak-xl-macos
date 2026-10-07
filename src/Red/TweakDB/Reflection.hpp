@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Logging/LoggingAgent.hpp"
 #include "Red/TweakDB/Alias.hpp"
 
 namespace Red
@@ -67,7 +68,7 @@ struct TweakDBRecordInfo
     }
 };
 
-class TweakDBReflection
+class TweakDBReflection : private Core::LoggingAgent
 {
 public:
     TweakDBReflection();

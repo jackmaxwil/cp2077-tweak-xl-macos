@@ -114,7 +114,7 @@ bool App::MetadataImporter::ImportExtraFlats(const std::filesystem::path& aPath)
             while (numberOfFlats > 0)
             {
                 uint8_t propNameLen;
-                char propName[254];
+                char propName[256];
                 Red::CName propType;
                 Red::CName foreignType;
 
