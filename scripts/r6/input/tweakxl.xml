@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TweakXL hot reload, read by the game from r6/input/: \ (backslash, unused by the game) reloads r6/tweaks. -->
+<bindings>
+  <mapping name="tweakxl_reload" type="Button" append="true">
+    <button id="IK_Backslash" />
+  </mapping>
+
+  <context name="Exploration" append="true">
+    <action name="tweakxl_reload" map="tweakxl_reload" />
+  </context>
+</bindings>
