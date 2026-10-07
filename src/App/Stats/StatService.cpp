@@ -8,6 +8,8 @@ constexpr auto BaseStatPrefix = "BaseStats.";
 constexpr auto BaseStatPrefixLength = std::char_traits<char>::length(BaseStatPrefix);
 constexpr auto BaseStatCount = static_cast<uint32_t>(Red::game::data::StatType::Count);
 constexpr auto InvalidStat = static_cast<uint32_t>(Red::game::data::StatType::Invalid);
+// RedLib derives enum RTTI names from the C++ type name, whose spelling differs between compilers.
+static_assert(std::string_view(Red::GetTypeNameStr<Red::game::data::StatType>().data()) == "gamedataStatType");
 
 bool s_statTypesModified = false;
 bool s_statsHookInstalled = false;
@@ -62,6 +64,11 @@ void App::StatService::RegisterStats(void* aStatSystem, const Core::Set<Red::Twe
 {
     auto statRecords = Raw::StatsDataSystem::StatRecords::Ptr(aStatSystem);
     auto statTypeEnum = Red::GetDescriptor<Red::game::data::StatType>();
+    if (!statTypeEnum || !statRecords)
+    {
+        LogError("StatService: gamedataStatType is not available, custom stat types are disabled.");
+        return;
+    }
 
     auto& tweakManager = Core::Resolve<TweakService>()->GetManager();
 
