@@ -95,14 +95,14 @@ void App::StatService::RegisterStats(void* aStatSystem, const Core::Set<Red::Twe
             continue;
         }
 
-        if (statRecords->size == BaseStatCount)
+        if (statRecords->Size() == BaseStatCount)
         {
             // Add dummy entries for "Count" and "Invalid"
             statRecords->EmplaceBack();
             statRecords->EmplaceBack();
         }
 
-        const auto enumValue = statRecords->size;
+        const auto enumValue = statRecords->Size();
 
         statTypeEnum->AddOption(enumValue, enumName);
         statRecords->PushBack(recordID);
@@ -131,7 +131,7 @@ Raw::StatsDataSystem::StatRange App::StatService::OnGetStatRange(void* aSystem, 
         auto& statLock = Raw::StatsDataSystem::StatLock::Ref(aSystem);
 
         std::shared_lock _(statLock);
-        if (aStat < statParams.size)
+        if (aStat < statParams.Size())
         {
             return {statParams[aStat].min, statParams[aStat].max};
         }
@@ -148,7 +148,7 @@ uint64_t* App::StatService::OnGetStatRange(void* aSystem, uint64_t* aRange, uint
         auto& statLock = Raw::StatsDataSystem::StatLock::Ref(aSystem);
 
         std::shared_lock _(statLock);
-        if (aStat < statParams.size)
+        if (aStat < statParams.Size())
         {
             *aRange = statParams[aStat].range;
             return aRange;
@@ -168,7 +168,7 @@ uint32_t App::StatService::OnGetStatFlags(void* aSystem, uint32_t aStat)
         auto& statLock = Raw::StatsDataSystem::StatLock::Ref(aSystem);
 
         std::shared_lock _(statLock);
-        if (aStat < statParams.size)
+        if (aStat < statParams.Size())
         {
             return statParams[aStat].flags;
         }
@@ -185,7 +185,7 @@ bool App::StatService::OnCheckStatFlag(void* aSystem, uint32_t aStat, uint32_t a
         auto& statLock = Raw::StatsDataSystem::StatLock::Ref(aSystem);
 
         std::shared_lock _(statLock);
-        if (aStat < statParams.size)
+        if (aStat < statParams.Size())
         {
             return statParams[aStat].flags & aFlag;
         }

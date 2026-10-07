@@ -2,7 +2,7 @@
 
 #include "Core/Foundation/Feature.hpp"
 #include "Core/Hooking/HookingDriver.hpp"
-#include <RED4ext/Api/Sdk.hpp>
+#include <RED4ext/Api/v1/Sdk.hpp>
 #include <iostream>
 
 namespace Support
@@ -12,7 +12,7 @@ class MacOSHookingProvider
     , public Core::HookingDriver
 {
 public:
-    MacOSHookingProvider(RED4ext::PluginHandle aPlugin, const RED4ext::Sdk* aSdk) noexcept
+    MacOSHookingProvider(RED4ext::v1::PluginHandle aPlugin, const RED4ext::v1::Sdk* aSdk) noexcept
         : m_plugin(aPlugin)
         , m_sdk(aSdk)
     {
@@ -67,7 +67,7 @@ protected:
     }
 
 private:
-    RED4ext::PluginHandle m_plugin;
-    const RED4ext::Sdk* m_sdk;
+    RED4ext::v1::PluginHandle m_plugin;
+    const RED4ext::v1::Sdk* m_sdk;
 };
 }

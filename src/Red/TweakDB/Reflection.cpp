@@ -95,7 +95,7 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
     // skipped by position. Check that the skipped functions belong to the property, so a different registration
     // order (another platform or patch) fails closed instead of assigning flats to the wrong offsets.
     const auto relatedFuncsMatch = [aType](uint32_t aGetterIndex, uint32_t aCount) {
-        if (aGetterIndex + aCount >= aType->funcs.size)
+        if (aGetterIndex + aCount >= aType->funcs.Size())
             return false;
         auto lower = [](std::string aStr) {
             std::transform(aStr.begin(), aStr.end(), aStr.begin(), [](unsigned char c) { return std::tolower(c); });
@@ -110,7 +110,7 @@ Core::SharedPtr<Red::TweakDBRecordInfo> Red::TweakDBReflection::CollectRecordInf
         return true;
     };
 
-    for (uint32_t funcIndex = 0u; funcIndex < aType->funcs.size; ++funcIndex)
+    for (uint32_t funcIndex = 0u; funcIndex < aType->funcs.Size(); ++funcIndex)
     {
         const auto func = aType->funcs[funcIndex];
 

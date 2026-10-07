@@ -41,9 +41,9 @@ void BootTrace(const char* aMessage)
 }
 
 #if defined(_WIN32) || defined(_WIN64)
-App::Application::Application(HMODULE aHandle, const RED4ext::Sdk* aSdk)
+App::Application::Application(HMODULE aHandle, const RED4ext::v1::Sdk* aSdk)
 #else
-App::Application::Application(void* aHandle, const RED4ext::Sdk* aSdk)
+App::Application::Application(void* aHandle, const RED4ext::v1::Sdk* aSdk)
 #endif
 {
     BootTrace("Step 1: RuntimeProvider...");
