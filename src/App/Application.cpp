@@ -47,8 +47,14 @@ App::Application::Application(void* aHandle, const RED4ext::Sdk* aSdk)
 #endif
 {
     BootTrace("Step 1: RuntimeProvider...");
+    // Game root from the executable: bin/x64/Cyberpunk2077.exe on Windows,
+    // Cyberpunk2077.app/Contents/MacOS/Cyberpunk2077 on macOS.
     Register<Core::RuntimeProvider>(aHandle)
+#if defined(_WIN32) || defined(_WIN64)
         ->SetBaseImagePathDepth(2);
+#else
+        ->SetBaseImagePathDepth(3);
+#endif
 
 #if defined(_WIN32) || defined(_WIN64)
     Register<Support::MinHookProvider>();
