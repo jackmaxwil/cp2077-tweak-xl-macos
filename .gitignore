@@ -8,4 +8,6 @@
 /src/App/Project.hpp
 /src/App/Version.rc
 /build-*
-/build*.log
+*.log
+.DS_Store
+__pycache__/
