@@ -1,10 +1,10 @@
 # TweakXL for macOS
 
-TweakXL lets mods change Cyberpunk 2077's TweakDB, the game database of items, stats, vehicles and other records. This is a macOS port of [psiberx/cp2077-tweak-xl](https://github.com/psiberx/cp2077-tweak-xl). It runs as a RED4ext plugin on Cyberpunk 2077 2.3.1 (Steam, Apple silicon). It loads YAML and `.tweak` files from `r6/tweaks/`, creates and overrides records and flats, adds custom stats and runs scriptable tweaks. Tweak files written for Windows work unchanged.
+TweakXL lets mods change Cyberpunk 2077's TweakDB, the game database of items, stats, vehicles and other records. This is a macOS port of [psiberx/cp2077-tweak-xl](https://github.com/psiberx/cp2077-tweak-xl). It runs as a RED4ext plugin on Cyberpunk 2077 2.5.0 (Steam, Apple silicon). It loads YAML and `.tweak` files from `r6/tweaks/`, creates and overrides records and flats, adds custom stats and runs scriptable tweaks. Tweak files written for Windows work unchanged.
 
 ## Install
 
-TweakXL is part of the RED4ext macOS release (Cyberpunk 2077 2.3.1, Steam, Apple silicon). Quit the game, open Terminal
+TweakXL is part of the RED4ext macOS release (Cyberpunk 2077 2.5.0, Steam, Apple silicon). Quit the game, open Terminal
 and run:
 
 ```bash
